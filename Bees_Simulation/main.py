@@ -73,7 +73,7 @@ class Application:
 
         return f
 
-    def create_bees(self, size=10):
+    def create_bees(self, size=30):
         p = np.random.randint(50, size=size)
         r = np.random.randint(50, size=size)
         f = list(zip(p, r))

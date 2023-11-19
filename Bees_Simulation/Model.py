@@ -55,14 +55,21 @@ def find_bee_by_id(bees, id):
 
 
 def scan(board, i, j):
-    for n in range(-2, 2):
-        for m in range(-2, 2):
+    gained_memory = []
+    for n in range(-2, 3):
+        for m in range(-2, 3):
             try:
                 if board[i + n][j + m] == 100:
-                    return [i + n, j + m]
+                    return [i + n, j + m], []
+                elif 0 < board[i + n][j + m] < 200:
+                    bee_id = board[i + n, j + m]
+                    neighbour_bee = find_bee_by_id(bee_id)
+
+                    if neighbour_bee.dance:
+                        gained_memory.append(neighbour_bee.memory[-1])
             except:
                 continue
-    return None
+    return None, gained_memory
 
 
 def bee_move(dest, i, j):
@@ -104,7 +111,9 @@ def process(board, flowers, bees, hive: Hive):
 
                 bee = find_bee_by_id(bees, board[i][j])
 
-                flower = scan(board, i, j)
+                flower, new_memory = scan(board, i, j)
+                bee.memory.extend(new_memory)
+                bee.memory = list(set(bee.memory))
 
                 if flower is not None:
                     print('dance')
