@@ -36,12 +36,10 @@ class Application:
         self.board = np.zeros((800, 800))
         self.flowers = self.pick_flowers()
 
+        self.board[25][25] = 200 #hive token
+        self.hive = Hive(25, 25)
         self.bees = []
         self.create_bees()
-
-        self.board[25][25] = 200 #hive token
-
-        self.hive = Hive(self.bees)
 
         self.draw_model()
         self.run()
@@ -75,20 +73,21 @@ class Application:
         return f
 
     def create_bees(self, size=30):
-        p = np.random.randint(50, size=size)
-        r = np.random.randint(50, size=size)
-        f = list(zip(p, r))
+        # p = np.random.randint(50, size=size)
+        # r = np.random.randint(50, size=size)
+        # f = list(zip(p, r))
 
-        s = np.random.randint(50, size=size)
-        t = np.random.randint(50, size=size)
-        g = list(zip(s, t))
-        print(f)
+        # s = np.random.randint(50, size=size)
+        # t = np.random.randint(50, size=size)
+        # g = list(zip(s, t))
+        # print(f)
         for i in range(size):
             print(i)
             bee = Bee(i+1)
-            bee.destination = g[i]
+            # bee.destination = g[i]
             self.bees.append(bee)
-            self.board[f[i][0]][f[i][1]] = i+1
+            self.hive.add_bee(bee)
+            # self.board[f[i][0]][f[i][1]] = i+1
 
     def manage_keys(self):
         for event in pygame.event.get():
