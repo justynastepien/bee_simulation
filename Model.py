@@ -142,13 +142,13 @@ def process(board, flowers, bees, hive: Hive):
                 #         bee.destination = dest
 
                 move = bee_move(dest, i, j)
-                if board[i + move[0]][j + move[1]] == 0:
+                if new_board[i + move[0]][j + move[1]] == 0:
                     new_board[i + move[0]][j + move[1]] = board[i][j]
                 else:
                     (x, y) = (i, j)
                     x += random.randint(-1, 1)
                     y += random.randint(-1, 1)
-                    if board[x][y] == 0:
+                    if new_board[x][y] == 0:
                         new_board[x][y] = board[i][j]
                     else:
                         new_board[i][j] = board[i][j]
