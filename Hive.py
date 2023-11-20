@@ -13,8 +13,8 @@ class Hive:
         self.bees.append(bee)
 
     def go_outside(self, bee, board):
-        # rx = random.randint(-2, 2)
-        # ry = random.randint(-2, 2)
+        # rx = random.randint(-1, 1)
+        # ry = random.randint(-1, 1)
         rx = 1
         ry = 0
 

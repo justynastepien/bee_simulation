@@ -27,7 +27,7 @@ class Application:
 
         self.bee_img = pygame.image.load(Path('assets/bee.png'))
         self.bee_img = pygame.transform.scale(self.bee_img, (16, 16))
-        self.updateTime = 0.5
+        self.updateTime = 0.05
 
         self.running = True
 

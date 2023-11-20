@@ -21,8 +21,9 @@ grey = (120, 120, 120)
 orange = (30, 230, 55)
 
 P_BORED_TO_SEARCH = 0.03
-P_BORED_TO_FLYING_TO_FLOWER = 0.1
+P_BORED_TO_FLYING_TO_FLOWER = 0.8
 P_RESTING_TO_BORED = 0.3
+P_DANCING_TO_RESTING = 0.1
 
 
 def decision(probability) -> bool:
@@ -195,5 +196,14 @@ def process(board, flowers, bees, hive: Hive):
                 bee.status = BeeStatus.BORED
                 print(f"Bee {bee.id} rested. Its bored.")
                 break
+
+        if bee.status == BeeStatus.DANCING:
+            if decision(P_DANCING_TO_RESTING):
+                bee.status = BeeStatus.RESTING
+                print(f"Bee {bee.id} is tired of dancing. Resting.")
+                break
+
+        if bee.status == BeeStatus.SEARCHING:
+            bee.status = BeeStatus.BORED
 
     return new_board
