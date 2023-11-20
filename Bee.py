@@ -5,7 +5,7 @@ class BeeStatus(Enum):
     BORED = 1
     DANCING = 2
     SEARCHING = 3
-    FLYING_TO_FLOWER = 4
+    # FLYING_TO_FLOWER = 4
     RETURNING_TO_HIVE = 5
 
 class Bee:

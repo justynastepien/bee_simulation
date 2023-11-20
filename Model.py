@@ -20,7 +20,9 @@ green = (0, 255, 0)
 grey = (120, 120, 120)
 orange = (30, 230, 55)
 
-P_BORED_TO_SEARCH = 0.05
+P_BORED_TO_SEARCH = 0.03
+P_BORED_TO_FLYING_TO_FLOWER = 0.1
+P_RESTING_TO_BORED = 0.3
 
 
 def decision(probability) -> bool:
@@ -60,7 +62,7 @@ def draw_board(board, screen, width, bee_img, hive_img):
 def find_bee_by_id(bees, id):
     filtered = filter(lambda x: x.id == id, bees)
 
-    print(filtered)
+    # print(filtered)
     return list(filtered)[0]
 
 
@@ -161,6 +163,7 @@ def process(board, flowers, bees, hive: Hive):
                     print(f"Bee {bee.id} found flower at {flower}, returning to hive")
                     bee.status = BeeStatus.RETURNING_TO_HIVE
                     bee.destination = (hive.x, hive.y)
+                    bee.memory.append((flower[0], flower[1]))
 
                 if bee.status == BeeStatus.SEARCHING and (i,j) == bee.destination:
                     print(f"Bee {bee.id} did not found a flower :(, trying again")
@@ -177,6 +180,20 @@ def process(board, flowers, bees, hive: Hive):
                 break
 
         # if bee.status == BeeStatus
+        if bee.status == BeeStatus.BORED:
+            for hive_bee in hive.bees:
+                if hive_bee.status == BeeStatus.DANCING and decision(P_BORED_TO_FLYING_TO_FLOWER):
+                    hive.go_outside(bee, new_board)
+                    bee.status = BeeStatus.SEARCHING
+                    bee.destination = hive_bee.memory[-1]
+                    hive_bee.status = BeeStatus.RESTING
+                    print(f"Bee {bee.id} saw bee {hive_bee.id} dance and goes for flower {bee.destination}!")
+                    break
 
+        if bee.status == BeeStatus.RESTING:
+            if decision(P_RESTING_TO_BORED):
+                bee.status = BeeStatus.BORED
+                print(f"Bee {bee.id} rested. Its bored.")
+                break
 
     return new_board
