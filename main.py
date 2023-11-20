@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 
 import pygame
 from pygame.locals import *
@@ -15,16 +16,16 @@ class Application:
         (self.width, self.height) = (852, 852)
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("Bees Simulation")
-        self.bg_img = pygame.image.load('grass.jpg')
+        self.bg_img = pygame.image.load(Path('assets/grass.jpg'))
         self.bg_img = pygame.transform.scale(self.bg_img, (852, 852))
 
-        self.hive_img = pygame.image.load('hive.png')
+        self.hive_img = pygame.image.load(Path('assets/hive.png'))
         self.hive_img = pygame.transform.scale(self.hive_img, (58, 58)) #60x60
 
-        self.flower_img = pygame.image.load('flower.png')
+        self.flower_img = pygame.image.load(Path('assets/flower.png'))
         self.flower_img = pygame.transform.scale(self.flower_img, (16, 16))
 
-        self.bee_img = pygame.image.load('bee.png')
+        self.bee_img = pygame.image.load(Path('assets/bee.png'))
         self.bee_img = pygame.transform.scale(self.bee_img, (16, 16))
         self.updateTime = 0.5
 
@@ -123,3 +124,4 @@ class Application:
 
 
 app = Application()
+app.run()

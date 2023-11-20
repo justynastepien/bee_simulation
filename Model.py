@@ -16,11 +16,6 @@ green = (0, 255, 0)
 grey = (120, 120, 120)
 orange = (30, 230, 55)
 
-light_color = red
-car_color = blue
-bus_color = orange
-empty_color = grey
-
 
 def draw_grid(screen, width):
     for i in range(51):
