@@ -16,6 +16,9 @@ FILENAME_BOARD = DUMP_LOCATION / "board.csv"
 FILENAME_BEES = DUMP_LOCATION / "bees.yml"
 FILENAME_HIVE = DUMP_LOCATION / "hive.yml"
 
+MAX_FLOWER_SIZE = 10
+DEFAULT_FLOWER_SIZE = (16, 16)
+
 
 class Application:
 
@@ -30,7 +33,9 @@ class Application:
         self.hive_img = pygame.transform.scale(self.hive_img, (58, 58)) #60x60
 
         self.flower_img = pygame.image.load(Path('assets/flower.png'))
-        self.flower_img = pygame.transform.scale(self.flower_img, (16, 16))
+        self.flower_img = pygame.transform.scale(self.flower_img, DEFAULT_FLOWER_SIZE)
+        self.flower_imgs = []
+        self.generate_flower_images()
 
         self.bee_img = pygame.image.load(Path('assets/bee.png'))
         self.bee_img = pygame.transform.scale(self.bee_img, (16, 16))
@@ -41,7 +46,7 @@ class Application:
         self.running_time = 0
 
         self.board = np.zeros((800, 800))
-        self.flowers = self.pick_flowers()
+        self.pick_flowers()
 
         self.board[25][25] = 200 #hive token
         self.hive = Hive(25, 25)
@@ -54,7 +59,7 @@ class Application:
     def draw_model(self):
         self.screen.blit(self.bg_img, (0, 0))
 
-        Model.draw_flowers(self.screen, self.flowers, self.flower_img)
+        Model.draw_flowers(self.screen, self.board, self.flower_imgs)
         Model.draw_board(self.board, self.screen, 800, self.bee_img, self.hive_img)
 
         pygame.display.flip()
@@ -66,18 +71,26 @@ class Application:
         f = list(zip(p, r))
 
         for i in f:
+            flower_size = np.random.randint(1, 10) * 1000
 
             if self.board[i[0]][i[1]] == 200:
                 z = 1
                 while z < 400:
                     if self.board[i[0]+z][i[1]] == 0:
-                        self.board[i[0]][i[1]] = 100
+                        self.board[i[0]][i[1]] = flower_size
                         break
             else:
                 # 100 flower token
-                self.board[i[0]][i[1]] = 100
+                self.board[i[0]][i[1]] = flower_size
 
         return f
+    
+    def generate_flower_images(self):
+        for i in range(MAX_FLOWER_SIZE):
+            new_size = (int(DEFAULT_FLOWER_SIZE[0] * (1 + i*0.2)), int(DEFAULT_FLOWER_SIZE[1] * (1 + i*0.2)))
+            print(new_size)
+            self.flower_imgs.append(pygame.transform.scale(self.flower_img, new_size))
+
 
     def create_bees(self, size=30):
         # p = np.random.randint(50, size=size)
@@ -135,7 +148,7 @@ class Application:
 
     def run(self):
         while self.running:
-            self.board = Model.process(self.board, self.flowers, self.bees, self.hive)
+            self.board = Model.process(self.board, self.bees, self.hive)
 
             self.draw_model()
 
