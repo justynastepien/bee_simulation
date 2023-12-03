@@ -1,3 +1,4 @@
-pygame
-numpy
-pyyaml
+pygame~=2.1.2
+numpy~=1.23.5
+pyyaml~=6.0
+matplotlib~=3.7.1

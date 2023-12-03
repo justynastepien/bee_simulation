@@ -10,6 +10,7 @@ import numpy as np
 import Model
 from Hive import Hive
 from Bee import Bee
+from Statistics import Statistic
 
 DUMP_LOCATION = Path("dump")
 FILENAME_BOARD = DUMP_LOCATION / "board.csv"
@@ -54,6 +55,7 @@ class Application:
         self.create_bees()
 
         self.draw_model()
+        self.stats = Statistic(time.time(), self.board)
         self.run()
 
     def draw_model(self):
@@ -63,7 +65,6 @@ class Application:
         Model.draw_board(self.board, self.screen, 800, self.bee_img, self.hive_img)
 
         pygame.display.flip()
-        start = time.time()
 
     def pick_flowers(self):
         p = np.random.randint(50, size=20)
@@ -91,7 +92,6 @@ class Application:
             print(new_size)
             self.flower_imgs.append(pygame.transform.scale(self.flower_img, new_size))
 
-
     def create_bees(self, size=30):
         # p = np.random.randint(50, size=size)
         # r = np.random.randint(50, size=size)
@@ -109,7 +109,6 @@ class Application:
             self.hive.add_bee(bee)
             # self.board[f[i][0]][f[i][1]] = i+1
 
-
     def dump_data(self):
         print("---DUMPING DATA...")
         DUMP_LOCATION.mkdir(exist_ok=True)
@@ -121,7 +120,6 @@ class Application:
         with open(FILENAME_HIVE, mode="w") as f:
             yaml.dump(self.hive, f)
         print("---DATA DUMPED")
-
 
     def manage_keys(self):
         for event in pygame.event.get():
@@ -148,7 +146,7 @@ class Application:
 
     def run(self):
         while self.running:
-            self.board = Model.process(self.board, self.bees, self.hive)
+            self.board = Model.process(self.board, self.bees, self.hive, self.stats)
 
             self.draw_model()
 

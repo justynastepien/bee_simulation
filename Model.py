@@ -1,10 +1,12 @@
-import pygame
-import numpy as np
 import random
 
+import numpy as np
+import pygame
+import time
 
-from Bee import Bee, BeeStatus
+from Bee import BeeStatus
 from Hive import Hive
+from Statistics import Statistic
 
 START = 1
 BLOCK_SIZE = 16
@@ -28,6 +30,7 @@ P_DANCING_TO_RESTING = 0.1
 
 def decision(probability) -> bool:
     return random.random() < probability
+
 
 def rand_destination():
     x = np.random.randint(0, BOARD_WIDTH)
@@ -70,7 +73,7 @@ def find_bee_by_id(bees, id):
     return list(filtered)[0]
 
 
-def scan(board, new_board, i, j):
+def scan(board, new_board, i, j, stats):
     gained_memory = []
     for n in range(-2, 3):
         for m in range(-2, 3):
@@ -78,6 +81,8 @@ def scan(board, new_board, i, j):
                 if board[i + n][j + m] >= 1000:
                     new_board[i + n][j + m] = board[i + n][j + m] - 1000
                     board[i + n][j + m] = board[i + n][j + m] - 1000
+                    if board[i + n][j + m] == 0:
+                        stats.draw_plot(time.time(), board)
                     return [i + n, j + m], []
                 elif 0 < board[i + n][j + m] < 200:
                     bee_id = board[i + n, j + m]
@@ -114,7 +119,7 @@ def find_new_destination():
     return dest
 
 
-def process(board, bees, hive: Hive):
+def process(board, bees, hive: Hive, stats: Statistic):
     new_board = np.zeros((800, 800))
     for i in range(board.shape[0]):
         for j in range(board.shape[1]):
@@ -129,7 +134,7 @@ def process(board, bees, hive: Hive):
 
                 bee = find_bee_by_id(bees, board[i][j])
 
-                flower, new_memory = scan(board, new_board, i, j)
+                flower, new_memory = scan(board, new_board, i, j, stats)
                 bee.memory.extend(new_memory)
                 bee.memory = list(set(bee.memory))
 
