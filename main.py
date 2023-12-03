@@ -1,5 +1,7 @@
 import sys
 from pathlib import Path
+import csv
+import yaml
 
 import pygame
 from pygame.locals import *
@@ -8,6 +10,11 @@ import numpy as np
 import Model
 from Hive import Hive
 from Bee import Bee
+
+DUMP_LOCATION = Path("dump")
+FILENAME_BOARD = DUMP_LOCATION / "board.csv"
+FILENAME_BEES = DUMP_LOCATION / "bees.yml"
+FILENAME_HIVE = DUMP_LOCATION / "hive.yml"
 
 
 class Application:
@@ -89,6 +96,20 @@ class Application:
             self.hive.add_bee(bee)
             # self.board[f[i][0]][f[i][1]] = i+1
 
+
+    def dump_data(self):
+        print("---DUMPING DATA...")
+        DUMP_LOCATION.mkdir(exist_ok=True)
+        with open(FILENAME_BOARD, mode="w") as f:
+            writer = csv.writer(f)
+            writer.writerows(self.board)
+        with open(FILENAME_BEES, mode="w") as f:
+            yaml.dump(self.bees, f)
+        with open(FILENAME_HIVE, mode="w") as f:
+            yaml.dump(self.hive, f)
+        print("---DATA DUMPED")
+
+
     def manage_keys(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -109,6 +130,8 @@ class Application:
                                                           mod=pygame.locals.KMOD_NONE)
                             pygame.event.post(newevent)
                             break
+                        if event.key == K_s:
+                            self.dump_data()
 
     def run(self):
         while self.running:
