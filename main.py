@@ -148,6 +148,9 @@ class Application:
         while self.running:
             self.board = Model.process(self.board, self.bees, self.hive, self.stats)
 
+            if not self.board[25][25] == 200:
+                self.board[25][25] = 200
+
             self.draw_model()
 
             time.sleep(self.updateTime)

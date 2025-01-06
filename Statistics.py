@@ -31,11 +31,13 @@ class Statistic:
         list_number = list(range(self.num_of_flowers, 21))
         list_number.reverse()
         k = 20 - self.num_of_flowers
+
         plt.plot(self.times, list_number, 'ro')
         plt.xlabel('time')
         plt.ylabel('number of flowers')
-        plt.savefig('flowers_per_time/plot_' + str(k))
         plt.show()
+        # plt.savefig('flowers_per_time/plot_' + str(k))
+        # plt.show()
 
         plt.plot(self.times, list_number)
         plt.xlabel('time')
@@ -46,7 +48,7 @@ class Statistic:
         plt.plot(self.times, self.avg)
         plt.xlabel('time')
         plt.ylabel('average of distances flowers from hive')
-        plt.savefig('avg_per_time/plot_' + str(k))
+        # plt.savefig('avg_per_time/plot_' + str(k))
         plt.show()
 
 
