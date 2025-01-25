@@ -4,9 +4,9 @@ import numpy as np
 
 
 class Statistic:
-    def __init__(self, start_time: time, board):
+    def __init__(self, start_time: time, board, flower_number):
         self.start_time = start_time
-        self.num_of_flowers = 20
+        self.num_of_flowers = flower_number
         self.times = [0]
         self.avg = []
         self.count_avg_distance(board)
@@ -21,22 +21,29 @@ class Statistic:
                     b = np.array((x, y))
                     sum_distances += np.linalg.norm(hive - b)
                     count += 1
-
+        if count == 0:
+            self.avg.append(0)
         self.avg.append(sum_distances/count)
 
     def draw_plot(self, time_flower, board):
         self.times.append(time_flower - self.start_time)
-        self.num_of_flowers = self.num_of_flowers - 1
+        self.num_of_flowers = np.sum(board >= 1000)
+        print(type(np.sum(board >= 1000)))
+        print("---------------")
+        print("Number of flowers stats: ", self.num_of_flowers)
+        print("---------------")
 
         list_number = list(range(self.num_of_flowers, 21))
         list_number.reverse()
         k = 20 - self.num_of_flowers
-
+        print("times: ", self.times)
+        print("list_number: ", list_number)
         plt.plot(self.times, list_number, 'ro')
         plt.xlabel('time')
         plt.ylabel('number of flowers')
+        #plt.savefig('flowers_per_time/plot_' + str(k))
         plt.show()
-        # plt.savefig('flowers_per_time/plot_' + str(k))
+        #plt.savefig('flowers_per_time/plot_' + str(k))
         # plt.show()
 
         plt.plot(self.times, list_number)

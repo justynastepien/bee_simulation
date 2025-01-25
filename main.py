@@ -20,6 +20,8 @@ FILENAME_HIVE = DUMP_LOCATION / "hive.yml"
 MAX_FLOWER_SIZE = 10
 DEFAULT_FLOWER_SIZE = (16, 16)
 
+all_times = []
+
 
 class Application:
 
@@ -40,12 +42,12 @@ class Application:
 
         self.bee_img = pygame.image.load(Path('assets/bee.png'))
         self.bee_img = pygame.transform.scale(self.bee_img, (16, 16))
-        self.updateTime = 0.05
+        self.updateTime = 0.001
 
         self.running = True
 
         self.running_time = 0
-
+        self.flower_number = None
         self.board = np.zeros((800, 800))
         self.pick_flowers()
 
@@ -55,7 +57,7 @@ class Application:
         self.create_bees()
 
         self.draw_model()
-        self.stats = Statistic(time.time(), self.board)
+        self.stats = Statistic(time.time(), self.board, self.flower_number)
         self.run()
 
     def draw_model(self):
@@ -67,23 +69,27 @@ class Application:
         pygame.display.flip()
 
     def pick_flowers(self):
-        p = np.random.randint(50, size=20)
-        r = np.random.randint(50, size=20)
+        p = np.random.randint(35, size=20) + 8
+        r = np.random.randint(35, size=20) + 8
         f = list(zip(p, r))
+        num_flowers = 0
 
         for i in f:
             flower_size = np.random.randint(1, 10) * 1000
 
-            if self.board[i[0]][i[1]] == 200:
+            if self.board[i[0]][i[1]] != 0:
                 z = 1
                 while z < 400:
                     if self.board[i[0]+z][i[1]] == 0:
-                        self.board[i[0]][i[1]] = flower_size
+                        self.board[i[0]+z][i[1]] = flower_size
+                        num_flowers += 1
                         break
+                    z += 1
             else:
                 # 100 flower token
                 self.board[i[0]][i[1]] = flower_size
-
+                num_flowers += 1
+        self.flower_number = num_flowers
         return f
     
     def generate_flower_images(self):
@@ -158,6 +164,16 @@ class Application:
 
             self.running_time += 1
 
+            if self.stats.num_of_flowers == 0 or time.time() - self.stats.start_time > 300:
+                all_times.append(self.running_time)
+                break
 
-app = Application()
-app.run()
+
+for step in range(5):
+    print("<================>")
+    print(step)
+    app = Application()
+    app.run()
+
+print(all_times)
+print(np.average(all_times))

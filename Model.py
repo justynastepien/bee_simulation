@@ -79,9 +79,11 @@ def scan(board, new_board, i, j, stats):
         for m in range(-2, 3):
             try:
                 if board[i + n][j + m] >= 1000:
+                    count_1 = np.sum(board >= 1000)
                     new_board[i + n][j + m] = board[i + n][j + m] - 1000
                     board[i + n][j + m] = board[i + n][j + m] - 1000
-                    if board[i + n][j + m] == 0:
+                    count_2 = np.sum(board >= 1000)
+                    if board[i + n][j + m] == 0 or count_1 != count_2:
                         stats.draw_plot(time.time(), board)
                     return [i + n, j + m], []
                 elif 0 < board[i + n][j + m] < 200:
@@ -121,6 +123,7 @@ def find_new_destination():
 
 def process(board, bees, hive: Hive, stats: Statistic):
     new_board = np.zeros((800, 800))
+    count_1 = np.sum(board >= 1000)
     for i in range(board.shape[0]):
         for j in range(board.shape[1]):
 
@@ -183,11 +186,16 @@ def process(board, bees, hive: Hive, stats: Statistic):
                 #     bee.status = BeeStatus.RETURNING_TO_HIVE
                 #     bee.destination = (hive.x, hive.y)
                 #     break
+                count_2 = np.sum(board >= 1000)
+                #print(count_1," ", count_2)
+                # if count_1 != count_2:
+                #     stats.draw_plot(time.time(), board)
 
                 if bee.status == BeeStatus.SEARCHING and (i,j) == bee.destination:
                     print(f"Bee {bee.id} did not found a flower :(, trying again")
                     bee.destination = rand_destination()
                     break
+
 
 
     for bee in hive.bees:
