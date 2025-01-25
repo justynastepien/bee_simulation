@@ -42,13 +42,13 @@ class Application:
 
         self.bee_img = pygame.image.load(Path('assets/bee.png'))
         self.bee_img = pygame.transform.scale(self.bee_img, (16, 16))
-        self.updateTime = 0.001
+        self.updateTime = 0.005
 
         self.running = True
 
         self.running_time = 0
         self.flower_number = None
-        self.board = np.zeros((800, 800))
+        self.board = np.zeros((800, 800), dtype=int)
         self.pick_flowers()
 
         self.board[25][25] = 200 #hive token
@@ -73,7 +73,7 @@ class Application:
         r = np.random.randint(35, size=20) + 8
         f = list(zip(p, r))
         num_flowers = 0
-
+        print("flowers: -----")
         for i in f:
             flower_size = np.random.randint(1, 10) * 1000
 
@@ -81,14 +81,17 @@ class Application:
                 z = 1
                 while z < 400:
                     if self.board[i[0]+z][i[1]] == 0:
-                        self.board[i[0]+z][i[1]] = flower_size
+                        self.board[i[0]+z][i[1]] = int(flower_size)
+                        print((i[0]+z, i[1]))
                         num_flowers += 1
                         break
                     z += 1
             else:
                 # 100 flower token
-                self.board[i[0]][i[1]] = flower_size
+                self.board[i[0]][i[1]] = int(flower_size)
+                print((i[0], i[1]))
                 num_flowers += 1
+
         self.flower_number = num_flowers
         return f
     
@@ -164,7 +167,7 @@ class Application:
 
             self.running_time += 1
 
-            if self.stats.num_of_flowers == 0 or time.time() - self.stats.start_time > 300:
+            if np.sum(self.board >= 1000) == 0 or time.time() - self.stats.start_time > 300:
                 all_times.append(self.running_time)
                 break
 

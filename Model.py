@@ -66,33 +66,33 @@ def draw_board(board, screen, width, bee_img, hive_img):
                 screen.blit(bee_img, (i * BLOCK_W_SPACE + START, j * BLOCK_W_SPACE + START))
 
 
-def find_bee_by_id(bees, id):
-    filtered = filter(lambda x: x.id == id, bees)
+def find_bee_by_id(bees, id_):
+    filtered = filter(lambda x: x.id == id_, bees)
 
     # print(filtered)
     return list(filtered)[0]
 
 
-def scan(board, new_board, i, j, stats):
+def scan(board, new_board, i, j, stats, bees):
     gained_memory = []
     for n in range(-2, 3):
         for m in range(-2, 3):
             try:
                 if board[i + n][j + m] >= 1000:
-                    count_1 = np.sum(board >= 1000)
                     new_board[i + n][j + m] = board[i + n][j + m] - 1000
-                    board[i + n][j + m] = board[i + n][j + m] - 1000
+                    #board[i + n][j + m] = board[i + n][j + m] - 1000
                     count_2 = np.sum(board >= 1000)
-                    if board[i + n][j + m] == 0 or count_1 != count_2:
-                        stats.draw_plot(time.time(), board)
+
+                    stats.draw_plot(time.time(), board.copy(), count_2)
                     return [i + n, j + m], []
                 elif 0 < board[i + n][j + m] < 200:
                     bee_id = board[i + n, j + m]
-                    neighbour_bee = find_bee_by_id(bee_id)
+                    neighbour_bee = find_bee_by_id(bees, bee_id)
 
-                    if neighbour_bee.status == BeeStatus.DANCE:
+                    if neighbour_bee.status == BeeStatus.DANCING:
                         gained_memory.append(neighbour_bee.memory[-1])
-            except:
+            except Exception as e:
+                print(f"Błąd: {e}")
                 continue
     return None, gained_memory
 
@@ -122,22 +122,23 @@ def find_new_destination():
 
 
 def process(board, bees, hive: Hive, stats: Statistic):
-    new_board = np.zeros((800, 800))
-    count_1 = np.sum(board >= 1000)
+    new_board = np.zeros((800, 800), dtype=int)
+
+    for i in range(board.shape[0]):
+        for j in range(board.shape[1]):
+            if board[i][j] == 200:
+                new_board[i][j] = 200
+            elif board[i][j] >= 1000:
+                new_board[i][j] = board[i][j]
+
     for i in range(board.shape[0]):
         for j in range(board.shape[1]):
 
-            if board[i][j] == 200:
-                new_board[i][j] = 200
-                continue
-            elif board[i][j] >= 1000:
-                new_board[i][j] = board[i][j]
-                continue
-            elif 0 < board[i][j] < 100:
-
+            if 0 < board[i][j] < 100:
                 bee = find_bee_by_id(bees, board[i][j])
 
-                flower, new_memory = scan(board, new_board, i, j, stats)
+                flower, new_memory = scan(board, new_board, i, j, stats, bees)
+
                 bee.memory.extend(new_memory)
                 bee.memory = list(set(bee.memory))
 
@@ -186,16 +187,11 @@ def process(board, bees, hive: Hive, stats: Statistic):
                 #     bee.status = BeeStatus.RETURNING_TO_HIVE
                 #     bee.destination = (hive.x, hive.y)
                 #     break
-                count_2 = np.sum(board >= 1000)
-                #print(count_1," ", count_2)
-                # if count_1 != count_2:
-                #     stats.draw_plot(time.time(), board)
 
                 if bee.status == BeeStatus.SEARCHING and (i,j) == bee.destination:
                     print(f"Bee {bee.id} did not found a flower :(, trying again")
                     bee.destination = rand_destination()
                     break
-
 
 
     for bee in hive.bees:

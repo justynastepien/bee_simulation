@@ -25,10 +25,13 @@ class Statistic:
             self.avg.append(0)
         self.avg.append(sum_distances/count)
 
-    def draw_plot(self, time_flower, board):
+    def draw_plot(self, time_flower, board, number):
+        if not self.num_of_flowers == number:
+            self.num_of_flowers = int(np.sum(board >= 1000))
+        else:
+            return
         self.times.append(time_flower - self.start_time)
-        self.num_of_flowers = np.sum(board >= 1000)
-        print(type(np.sum(board >= 1000)))
+
         print("---------------")
         print("Number of flowers stats: ", self.num_of_flowers)
         print("---------------")
@@ -43,8 +46,6 @@ class Statistic:
         plt.ylabel('number of flowers')
         #plt.savefig('flowers_per_time/plot_' + str(k))
         plt.show()
-        #plt.savefig('flowers_per_time/plot_' + str(k))
-        # plt.show()
 
         plt.plot(self.times, list_number)
         plt.xlabel('time')
